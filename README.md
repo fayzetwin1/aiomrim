@@ -6,6 +6,8 @@ SDK для MRIM-сервера (Renaissance). Позволяет работат�
 
 [Документация](https://github.com/fayzetwin1/aiomrim/blob/main/docs/docs.md)
 
+[PyPI](https://pypi.org/project/aiomrim/1.0/)
+
 Связаться со мной: contact@fayzetwin.xyz 
 
 [Репозиторий Renaissance](https://github.com/mrimsu/mrim-server)
