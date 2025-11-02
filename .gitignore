@@ -1,2 +1,6 @@
 test.py
 /aiomrim/__pycache__
+/build/
+/aiomrim.egg-info/
+/dist/
+.vscode/
