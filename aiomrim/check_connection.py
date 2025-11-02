@@ -4,9 +4,9 @@ check server stability
 
 import aiohttp
 import asyncio
-from exceptions import APITimeoutError, APIConnectionError
+from .exceptions import APITimeoutError, APIConnectionError
 
-async def check_connection(url):
+async def check_connection(url: str):
     
     timeout = aiohttp.ClientTimeout(total=5)
     try:
@@ -18,7 +18,10 @@ async def check_connection(url):
     except aiohttp.ClientConnectorError as e:
         raise APIConnectionError(f"Connection error to url {url}: {e}")
     except aiohttp.ClientResponseError as e:
-        raise APIConnectionError(f"HTTP error {e.status} for url {url}: {e.message}")
+        if e.status >= 404:
+            pass
+        else:
+            raise APIConnectionError(f"HTTP error {e.status} for url {url}: {e.message}")
     except aiohttp.ClientError as e:
         raise APIConnectionError(f"Client error for url {url}: {e}")
     return True
