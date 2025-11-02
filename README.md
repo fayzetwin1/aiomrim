@@ -4,7 +4,7 @@
 
 SDK для MRIM-сервера (Renaissance). Позволяет работать с Rest.API Renaissance, и прочими вещами.
 
-[Документация](https://github.com/fayzetwin1/aiomrim/docs/docs.md)
+[Документация](https://github.com/fayzetwin1/aiomrim/blob/main/docs/docs.md)
 
 Связаться со мной: contact@fayzetwin.xyz 
 
