@@ -114,7 +114,7 @@ asyncio.run(checkconnect())
 result: True
 ```
 
-## admin_send.announce
+## admin.send_announce
 (отправить всем пользователям сервера сообщение от имени администратора)
 
 ```python
