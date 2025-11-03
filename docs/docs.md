@@ -53,7 +53,7 @@ asyncio.run(getonline())
 ```
 
 Получим подобный ответ:
-```json
+```
 online users: {'count': 1, 'users': 
 [{'userId': 19, 'username': 'fayzetwin11', 
 'status': 1, 'userAgent': 'client="magent" version="5.1" 
@@ -89,7 +89,7 @@ asyncio.run(reg_account())
 ```
 
 Получим подобный ответ: 
-```json
+```
 Status: {'status': 'ok'}
 ```
 
@@ -110,7 +110,7 @@ asyncio.run(checkconnect())
 
 Получим подобный ответ:
 
-```json
+```
 result: True
 ```
 
@@ -134,7 +134,7 @@ asyncio.run(announce())
 ![Announce function test](announce.png)
 
 А ответ получим следующий:
-```json
+```
 result: {'status': 'ok', 'users': 1}
 ```
 

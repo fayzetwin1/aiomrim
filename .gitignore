@@ -4,3 +4,4 @@ test.py
 /aiomrim.egg-info/
 /dist/
 .vscode/
+archive/
