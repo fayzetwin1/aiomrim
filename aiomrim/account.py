@@ -1,71 +1,37 @@
 """
-Working with account-related functionalities (not API implementation)
+'/users/register/' API implementation. Also for other methods for accounts in MRIM-Server (Renaissance)
+More about that: https://github.com/fayzetwin1/aiomrim/blob/main/docs/docs.md 
 """
-import aiomysql
-from typing import Any, List, Tuple
-import hashlib
 
-async def register_account(
-    login: str, nickname: str, firstname: str, sex: int, password: str, # default values
-    host: str, port: int, user = "root", db_password = "", database = "mrimdb", # mysql connection
-    last_name = None, birthday = None, zodiac = None, phone = None, avatar = None,
-    create_default_groups: bool = True) -> int: # optional value
+from .exceptions import APITimeoutError, APIConnectionError
+import aiohttp
+import asyncio
     
-    DEFAULT_GROUPS: List[str] = [
-        " ^t ^` ^c    ^l ^o",
-        "        ^k  ",
-        " ^z            ",
-        " ^~ ^a ^b     ^l    ^k  ",
-    ]
-
-    hash = hashlib.md5(password.encode("utf-8")).hexdigest()
-    db = {"host": host, "port": port, "user": user, "password": db_password, "db": database}
-    user_data = {
-        "login": login, "nick": nickname, "f_name": firstname, "l_name": last_name, 
-        "sex": sex, "passwd": hash, "birthday": birthday, "zodiac": zodiac, "phone": phone, "avatar": avatar}
+async def register_account(url: str,login: str,password:str,nickname:str,first_name:str,sex:int,
+last_name = None, location = None, birthday = None, status = None):
+    timeout = aiohttp.ClientTimeout(total=5)
     
-    fields, values, placeholders = [], [], []
-
-    for k, v in user_data.items():
-        if v is not None:
-            fields.append(k)
-            values.append(v)
-            placeholders.append("%s")
-
-    sql_user = f"INSERT INTO user ({', '.join(fields)}) VALUES ({', '.join(placeholders)})"
-
-    values_tuple = tuple(values)
-
-    user_id: int = -1
-    pool = None
-
     try:
-        pool = await aiomysql.create_pool(**db)
-        async with pool.acquire() as conn:
-            async with conn.cursor() as cursor:
-                await cursor.execute(sql_user, values_tuple)
-                user_id = cursor.lastrowid
-                
-                if not user_id:
-                    raise Exception("failed to retrieve user_id after insertion")
-                
-                if create_default_groups:
-                    sql_group = "INSERT INTO contact_group (user_id, name, idx) VALUES (%s, %s, %s)"
-                    group_data: List[Tuple[int, str, int]] = [
-                        (user_id, name, idx) 
-                        for idx, name in enumerate(DEFAULT_GROUPS)
-                    ]
-                    print(f'sql_group: {sql_group}, group_data: {group_data}')
-                    await cursor.executemany(sql_group, group_data)
-
-                await conn.commit()
-        return user_id
-    except Exception as e:
-        raise e
-    finally:
-        if pool:
-            pool.close()
-            await pool.wait_closed()
-    
-    
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.put(f"{url}/users/register", json=
+            {
+                "login": login, "passwd": password, "nick": nickname, 
+                "f_name": first_name, "sex": sex, "l_name": last_name, "location": location, 
+                "birthday": birthday, "status": status}
+            ) as response:
+                response.raise_for_status()
+                data = await response.json()
+                return data
+    except asyncio.TimeoutError:
+        raise APITimeoutError("Connection timed out")
+    except aiohttp.ClientConnectorError as e:
+        raise APIConnectionError(f"Connection error to url {url}/users/register: {e}")
+    except aiohttp.ClientResponseError as e:
+        if e.status == 400:
+            raise APIConnectionError(f"400 code error for url {url}/users/register: {e.message}. Are you sure what all necessary fields are filled? Or, maybe that login already registered?")
+        else:
+            raise APIConnectionError(f"HTTP Error with {e.status} code for url {url}/users/register: {e.message}")
+    except aiohttp.ClientError as e:
+        raise APIConnectionError(f"Client error for url {url}/users/register: {e}")
+    return None
     

@@ -1,3 +1,8 @@
+"""
+Admin-account API Implementation
+"""
+
+
 import aiohttp
 import asyncio
 from .exceptions import APITimeoutError, APIConnectionError
@@ -37,4 +42,5 @@ async def send_mail_to_all(url: str, message: str):
         raise APIConnectionError(f"Connection error to url {url}/users/sendMailToAll: {e}")
     except aiohttp.ClientResponseError as e:
         raise APIConnectionError(f"HTTP error {e.status} for url {url}/users/sendMailToAll: {e.message}")
+    return None
         

@@ -2,12 +2,11 @@ from setuptools import setup, find_packages
 
 setup(
     name="aiomrim",
-    version="1.0",
+    version="1.1",
     packages=find_packages(),
     install_requires=[
         "aiohttp >= 3.12.0",
         "asyncio >= 3.4.3",
-        "aiomysql >= 0.2.0",
     ],
     entry_points={
         'console_scripts': [
