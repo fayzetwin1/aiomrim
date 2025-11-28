@@ -28,6 +28,7 @@ async def send_announce(url: str, message: str):
         raise APIConnectionError(f"Client error for url {url}/users/announce: {e}")
     return None
 
+# in most, now this is a deprecated method
 async def send_mail_to_all(url: str, message: str):
     timeout = aiohttp.ClientTimeout(total=5)
     try:

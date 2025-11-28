@@ -7,17 +7,19 @@ from .exceptions import APITimeoutError, APIConnectionError
 import aiohttp
 import asyncio
     
-async def register_account(url: str,login: str,password:str,nickname:str,first_name:str,sex:int,
-last_name = None, location = None, birthday = None, status = None):
+async def register_account(
+    url: str, login: str, password: str, nickname: str, first_name: str, sex: int,
+    last_name=None, location=None, birthday=None, status=None, domain="mail.ru", phone="88005553555"):
+    
     timeout = aiohttp.ClientTimeout(total=5)
     
     try:
         async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.put(f"{url}/users/register", json=
             {
-                "login": login, "passwd": password, "nick": nickname, 
+                "login": login, "passwd": password, "domain": domain, "nick": nickname, 
                 "f_name": first_name, "sex": sex, "l_name": last_name, "location": location, 
-                "birthday": birthday, "status": status}
+                "birthday": birthday, "status": status, "phone":phone}
             ) as response:
                 response.raise_for_status()
                 data = await response.json()
@@ -28,7 +30,7 @@ last_name = None, location = None, birthday = None, status = None):
         raise APIConnectionError(f"Connection error to url {url}/users/register: {e}")
     except aiohttp.ClientResponseError as e:
         if e.status == 400:
-            raise APIConnectionError(f"400 code error for url {url}/users/register: {e.message}. Are you sure what all necessary fields are filled? Or, maybe that login already registered?")
+            raise APIConnectionError(f"400 code error for url {url}/users/register: {e.message}. Are you sure what all necessary fields are filled? Or, maybe that login already registered? {response.text}")
         else:
             raise APIConnectionError(f"HTTP Error with {e.status} code for url {url}/users/register: {e.message}")
     except aiohttp.ClientError as e:
